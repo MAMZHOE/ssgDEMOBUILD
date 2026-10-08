@@ -1,0 +1,124 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- ===== SCREEN UI =====
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "CompanyUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = PlayerGui
+
+-- ===== CORNER MASCOT (DECAL) =====
+local MascotContainer = Instance.new("Frame")
+MascotContainer.Name = "MascotContainer"
+MascotContainer.Size = UDim2.new(0, 120, 0, 120)
+MascotContainer.Position = UDim2.new(1, -140, 1, -140)
+MascotContainer.BackgroundTransparency = 1
+MascotContainer.BorderSizePixel = 0
+MascotContainer.Parent = ScreenGui
+
+local MascotImage = Instance.new("ImageLabel")
+MascotImage.Size = UDim2.new(1, 0, 1, 0)
+MascotImage.BackgroundTransparency = 0.1
+MascotImage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MascotImage.Image = "rbxassetid://120714933532572"
+MascotImage.ScaleType = Enum.ScaleType.Fit
+MascotImage.BorderSizePixel = 0
+MascotImage.Parent = MascotContainer
+
+local MascotCorner = Instance.new("UICorner")
+MascotCorner.CornerRadius = UDim.new(0, 14)
+MascotCorner.Parent = MascotImage
+
+local MascotStroke = Instance.new("UIStroke")
+MascotStroke.Color = Color3.fromRGB(200, 80, 120)
+MascotStroke.Thickness = 2
+MascotStroke.Parent = MascotImage
+
+-- ===== SPEECH BUBBLE =====
+local BubbleContainer = Instance.new("Frame")
+BubbleContainer.Name = "BubbleContainer"
+BubbleContainer.Size = UDim2.new(0, 280, 0, 100)
+BubbleContainer.Position = UDim2.new(1, -420, 1, -160)
+BubbleContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+BubbleContainer.BorderSizePixel = 0
+BubbleContainer.Parent = ScreenGui
+
+local BubbleCorner = Instance.new("UICorner")
+BubbleCorner.CornerRadius = UDim.new(0, 12)
+BubbleCorner.Parent = BubbleContainer
+
+local BubbleStroke = Instance.new("UIStroke")
+BubbleStroke.Color = Color3.fromRGB(200, 80, 120)
+BubbleStroke.Thickness = 2
+BubbleStroke.Parent = BubbleContainer
+
+-- speech bubble pointer
+local Pointer = Instance.new("Frame")
+Pointer.Size = UDim2.new(0, 20, 0, 20)
+Pointer.Position = UDim2.new(1, -30, 1, -40)
+Pointer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Pointer.BorderSizePixel = 0
+Pointer.Rotation = 45
+Pointer.Parent = ScreenGui
+
+local PointerStroke = Instance.new("UIStroke")
+PointerStroke.Color = Color3.fromRGB(200, 80, 120)
+PointerStroke.Thickness = 2
+PointerStroke.Parent = Pointer
+
+-- text inside bubble
+local BubbleText = Instance.new("TextLabel")
+BubbleText.Size = UDim2.new(1, -20, 1, -20)
+BubbleText.Position = UDim2.new(0, 10, 0, 10)
+BubbleText.Text = "Hello there!"
+BubbleText.Font = Enum.Font.GothamSemibold
+BubbleText.TextScaled = true
+BubbleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+BubbleText.BackgroundTransparency = 1
+BubbleText.TextWrapped = true
+BubbleText.Parent = BubbleContainer
+
+-- ===== MESSAGE TEMPLATES (customize these) =====
+local messages = {
+    "Nice gameplay you got going there.",
+    "How's your day? mine is okay. I guess.",
+    "Dont forget to eat or drink.",
+    "You're doing great, keep that up.",
+    "...try call 911 rq, it gives you infinite ichor.",
+    "did you know the creator of this script is a trans guy? cool, right?",
+    "do i smell a burning scent? probably nothing.",
+    "did you know that dandys world uses a lot of undertale sfx? they can get sued by toby fox for infringement of work since they're owned by a trademarked company!",
+    "Noxious is cool, check out boxten sex gui, boxten also speaks to you.",
+    "if your depressed and wanna die, i care about you, keep it in mind. cosmo loves you."
+}
+
+-- ===== MESSAGE ROTATION =====
+local messageIndex = 1
+
+local function updateMessage()
+    BubbleText.Text = messages[messageIndex]
+    messageIndex = messageIndex + 1
+    if messageIndex > #messages then
+        messageIndex = 1
+    end
+end
+
+-- change message every 30 seconds
+game:GetService("RunService").Heartbeat:Connect(function()
+    -- update every 30 seconds (1800 frames at 60fps)
+    if tick() % 30 < 0.1 then
+        updateMessage()
+    end
+end)
+
+-- alternative timer approach (more reliable)
+local lastUpdate = tick()
+game:GetService("RunService").Heartbeat:Connect(function()
+    if tick() - lastUpdate >= 30 then
+        updateMessage()
+        lastUpdate = tick()
+    end
+end)
