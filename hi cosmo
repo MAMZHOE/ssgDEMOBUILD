@@ -13,44 +13,17 @@ ScreenGui.Parent = PlayerGui
 -- ===== CONTAINER (FOR DRAGGING) =====
 local DragContainer = Instance.new("Frame")
 DragContainer.Name = "DragContainer"
-DragContainer.Size = UDim2.new(0, 400, 0, 150)
-DragContainer.Position = UDim2.new(1, -420, 1, -160)
+DragContainer.Size = UDim2.new(0, 420, 0, 140)
+DragContainer.Position = UDim2.new(0.5, -210, 0.5, -70)
 DragContainer.BackgroundTransparency = 1
 DragContainer.BorderSizePixel = 0
 DragContainer.Parent = ScreenGui
-
--- ===== CORNER MASCOT (DECAL) =====
-local MascotContainer = Instance.new("Frame")
-MascotContainer.Name = "MascotContainer"
-MascotContainer.Size = UDim2.new(0, 120, 0, 120)
-MascotContainer.Position = UDim2.new(0.75, 0, 0, 0)
-MascotContainer.BackgroundTransparency = 1
-MascotContainer.BorderSizePixel = 0
-MascotContainer.Parent = DragContainer
-
-local MascotImage = Instance.new("ImageLabel")
-MascotImage.Size = UDim2.new(1, 0, 1, 0)
-MascotImage.BackgroundTransparency = 0.1
-MascotImage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MascotImage.Image = "rbxassetid://120714933532572"
-MascotImage.ScaleType = Enum.ScaleType.Fit
-MascotImage.BorderSizePixel = 0
-MascotImage.Parent = MascotContainer
-
-local MascotCorner = Instance.new("UICorner")
-MascotCorner.CornerRadius = UDim.new(0, 14)
-MascotCorner.Parent = MascotImage
-
-local MascotStroke = Instance.new("UIStroke")
-MascotStroke.Color = Color3.fromRGB(200, 80, 120)
-MascotStroke.Thickness = 2
-MascotStroke.Parent = MascotImage
 
 -- ===== SPEECH BUBBLE =====
 local BubbleContainer = Instance.new("Frame")
 BubbleContainer.Name = "BubbleContainer"
 BubbleContainer.Size = UDim2.new(0, 280, 0, 120)
-BubbleContainer.Position = UDim2.new(0, 0, 0, 0)
+BubbleContainer.Position = UDim2.new(0, 0, 0, 10)
 BubbleContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 BubbleContainer.BorderSizePixel = 0
 BubbleContainer.Parent = DragContainer
@@ -64,20 +37,6 @@ BubbleStroke.Color = Color3.fromRGB(200, 80, 120)
 BubbleStroke.Thickness = 2
 BubbleStroke.Parent = BubbleContainer
 
--- speech bubble pointer
-local Pointer = Instance.new("Frame")
-Pointer.Size = UDim2.new(0, 20, 0, 20)
-Pointer.Position = UDim2.new(1, -30, 0, 100)
-Pointer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Pointer.BorderSizePixel = 0
-Pointer.Rotation = 45
-Pointer.Parent = DragContainer
-
-local PointerStroke = Instance.new("UIStroke")
-PointerStroke.Color = Color3.fromRGB(200, 80, 120)
-PointerStroke.Thickness = 2
-PointerStroke.Parent = Pointer
-
 -- text inside bubble
 local BubbleText = Instance.new("TextLabel")
 BubbleText.Size = UDim2.new(1, -20, 1, -20)
@@ -89,6 +48,33 @@ BubbleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 BubbleText.BackgroundTransparency = 1
 BubbleText.TextWrapped = true
 BubbleText.Parent = BubbleContainer
+
+-- ===== CORNER MASCOT (DECAL) =====
+local MascotContainer = Instance.new("Frame")
+MascotContainer.Name = "MascotContainer"
+MascotContainer.Size = UDim2.new(0, 120, 0, 120)
+MascotContainer.Position = UDim2.new(1, -120, 0, 0)
+MascotContainer.BackgroundTransparency = 1
+MascotContainer.BorderSizePixel = 0
+MascotContainer.Parent = DragContainer
+
+local MascotImage = Instance.new("ImageLabel")
+MascotImage.Size = UDim2.new(1, 0, 1, 0)
+MascotImage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MascotImage.BackgroundTransparency = 0
+MascotImage.Image = "rbxassetid://120714933532572"
+MascotImage.ScaleType = Enum.ScaleType.Stretch
+MascotImage.BorderSizePixel = 0
+MascotImage.Parent = MascotContainer
+
+local MascotCorner = Instance.new("UICorner")
+MascotCorner.CornerRadius = UDim.new(0, 14)
+MascotCorner.Parent = MascotImage
+
+local MascotStroke = Instance.new("UIStroke")
+MascotStroke.Color = Color3.fromRGB(200, 80, 120)
+MascotStroke.Thickness = 2
+MascotStroke.Parent = MascotImage
 
 -- ===== MESSAGE TEMPLATES (customize these) =====
 local messages = {
@@ -104,7 +90,7 @@ local messages = {
     "if your depressed and wanna die, i care about you, keep it in mind. cosmo loves you."
 }
 
--- ===== MESSAGE ROTATION (FIXED) =====
+-- ===== MESSAGE ROTATION =====
 local messageIndex = 1
 local lastMessageTime = tick()
 
@@ -117,14 +103,14 @@ local function updateMessage()
     lastMessageTime = tick()
 end
 
--- change message every 30 seconds (FIXED TIMER)
+-- change message every 30 seconds
 game:GetService("RunService").Heartbeat:Connect(function()
     if tick() - lastMessageTime >= 30 then
         updateMessage()
     end
 end)
 
--- ===== DRAGGABLE FUNCTIONALITY =====
+-- ===== DRAGGABLE FUNCTIONALITY (MOBILE + DESKTOP) =====
 local UserInputService = game:GetService("UserInputService")
 local mouse = LocalPlayer:GetMouse()
 
@@ -132,8 +118,8 @@ local isDragging = false
 local dragStart = Vector2.new(0, 0)
 local containerStart = UDim2.new(0, 0, 0, 0)
 
+-- Mouse button drag (Desktop)
 BubbleContainer.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         isDragging = true
         dragStart = Vector2.new(mouse.X, mouse.Y)
@@ -141,16 +127,40 @@ BubbleContainer.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
-UserInputService.InputEnded:Connect(function(input, gameProcessed)
+BubbleContainer.InputEnded:Connect(function(input, gameProcessed)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         isDragging = false
     end
 end)
 
+-- Touch drag (Mobile)
+BubbleContainer.InputBegan:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        isDragging = true
+        dragStart = Vector2.new(input.Position.X, input.Position.Y)
+        containerStart = DragContainer.Position
+    end
+end)
+
+BubbleContainer.InputEnded:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        isDragging = false
+    end
+end)
+
+-- Input changed for both mouse and touch
 UserInputService.InputChanged:Connect(function(input, gameProcessed)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        if isDragging then
-            local delta = Vector2.new(mouse.X, mouse.Y) - dragStart
+    if isDragging then
+        local currentPos = Vector2.new(0, 0)
+        
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            currentPos = Vector2.new(mouse.X, mouse.Y)
+        elseif input.UserInputType == Enum.UserInputType.Touch then
+            currentPos = Vector2.new(input.Position.X, input.Position.Y)
+        end
+        
+        if currentPos ~= Vector2.new(0, 0) then
+            local delta = currentPos - dragStart
             DragContainer.Position = UDim2.new(
                 containerStart.X.Scale,
                 containerStart.X.Offset + delta.X,
