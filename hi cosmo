@@ -1,15 +1,11 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local ContentProvider = game:GetService("ContentProvider")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
--- =====================================================
--- CONFIG: put your IMAGE asset ids here (not Decal ids)
--- =====================================================
-local SPEAKER_IMAGE_ID = "rbxassetid://128130329601408"
-local MASCOT_IMAGE_ID  = "rbxassetid://128130329601408"
+local SPEAKER_IMAGE_ID = "rbxassetid://120714933532572"
+local MASCOT_IMAGE_ID = "rbxassetid://120714933532572"
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "CompanyUI"
@@ -18,7 +14,7 @@ ScreenGui.IgnoreGuiInset = true
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 ScreenGui.Parent = PlayerGui
 
--- group that can be dragged around
+-- ===== DRAG GROUP =====
 local DragContainer = Instance.new("Frame")
 DragContainer.Name = "DragContainer"
 DragContainer.Size = UDim2.new(0, 420, 0, 140)
@@ -28,7 +24,7 @@ DragContainer.BorderSizePixel = 0
 DragContainer.ZIndex = 9999
 DragContainer.Parent = ScreenGui
 
--- bubble outer frame
+-- ===== BUBBLE =====
 local BubbleContainer = Instance.new("Frame")
 BubbleContainer.Name = "BubbleContainer"
 BubbleContainer.Size = UDim2.new(0, 280, 0, 120)
@@ -47,7 +43,6 @@ BubbleStroke.Color = Color3.fromRGB(101, 67, 33)
 BubbleStroke.Thickness = 2
 BubbleStroke.Parent = BubbleContainer
 
--- inner message background
 local InnerBubble = Instance.new("Frame")
 InnerBubble.Name = "InnerBubble"
 InnerBubble.Size = UDim2.new(1, -16, 1, -16)
@@ -61,43 +56,7 @@ local InnerCorner = Instance.new("UICorner")
 InnerCorner.CornerRadius = UDim.new(0, 10)
 InnerCorner.Parent = InnerBubble
 
--- =====================================================
--- helper: image with a visible fallback if it fails to load
--- =====================================================
-local imagesToCheck = {}
-
-local function makeImage(parent, name, assetId, zIndex, scaleType, fallbackText)
-	local img = Instance.new("ImageLabel")
-	img.Name = name
-	img.Size = UDim2.new(1, 0, 1, 0)
-	img.Position = UDim2.new(0, 0, 0, 0)
-	img.BackgroundTransparency = 1
-	img.BorderSizePixel = 0
-	img.Image = assetId
-	img.ScaleType = scaleType
-	img.ImageTransparency = 0
-	img.ZIndex = zIndex
-	img.Parent = parent
-
-	local fallback = Instance.new("TextLabel")
-	fallback.Name = "Fallback"
-	fallback.Size = UDim2.new(1, 0, 1, 0)
-	fallback.BackgroundTransparency = 1
-	fallback.Text = fallbackText
-	fallback.TextScaled = true
-	fallback.Font = Enum.Font.GothamBold
-	fallback.TextColor3 = Color3.fromRGB(255, 255, 255)
-	fallback.Visible = false
-	fallback.ZIndex = zIndex + 1
-	fallback.Parent = parent
-
-	table.insert(imagesToCheck, {image = img, fallback = fallback})
-	return img
-end
-
--- =====================================================
--- speaker icon (left side of the bubble, circular)
--- =====================================================
+-- ===== SPEAKER ICON (LEFT) =====
 local SpeakerFrame = Instance.new("Frame")
 SpeakerFrame.Name = "SpeakerFrame"
 SpeakerFrame.Size = UDim2.new(0, 54, 0, 54)
@@ -108,27 +67,33 @@ SpeakerFrame.BorderSizePixel = 0
 SpeakerFrame.ZIndex = 10001
 SpeakerFrame.Parent = InnerBubble
 
-local SpeakerFrameCorner = Instance.new("UICorner")
-SpeakerFrameCorner.CornerRadius = UDim.new(1, 0)
-SpeakerFrameCorner.Parent = SpeakerFrame
+local SpeakerCorner = Instance.new("UICorner")
+SpeakerCorner.CornerRadius = UDim.new(1, 0)
+SpeakerCorner.Parent = SpeakerFrame
 
 local SpeakerStroke = Instance.new("UIStroke")
 SpeakerStroke.Color = Color3.fromRGB(140, 95, 50)
 SpeakerStroke.Thickness = 2
 SpeakerStroke.Parent = SpeakerFrame
 
-local SpeakerImage = makeImage(SpeakerFrame, "SpeakerImage", SPEAKER_IMAGE_ID, 10002, Enum.ScaleType.Crop, "🔊")
+local SpeakerImage = Instance.new("ImageLabel")
+SpeakerImage.Name = "SpeakerImage"
+SpeakerImage.Size = UDim2.new(1, 0, 1, 0)
+SpeakerImage.BackgroundTransparency = 1
+SpeakerImage.BorderSizePixel = 0
+SpeakerImage.Image = SPEAKER_IMAGE_ID
+SpeakerImage.ScaleType = Enum.ScaleType.Stretch
+SpeakerImage.ZIndex = 10002
+SpeakerImage.Parent = SpeakerFrame
 
 local SpeakerImageCorner = Instance.new("UICorner")
 SpeakerImageCorner.CornerRadius = UDim.new(1, 0)
 SpeakerImageCorner.Parent = SpeakerImage
 
--- =====================================================
--- bubble text
--- =====================================================
+-- ===== TEXT =====
 local BubbleText = Instance.new("TextLabel")
 BubbleText.Name = "BubbleText"
-BubbleText.Size = UDim2.new(1, -82, 1, -20)
+BubbleText.Size = UDim2.new(1, -82, 1, -22)
 BubbleText.Position = UDim2.new(0, 74, 0, 10)
 BubbleText.Text = "Hello there!"
 BubbleText.Font = Enum.Font.GothamBold
@@ -140,9 +105,13 @@ BubbleText.TextXAlignment = Enum.TextXAlignment.Left
 BubbleText.ZIndex = 10003
 BubbleText.Parent = InnerBubble
 
--- =====================================================
--- mascot (right side, always the top layer)
--- =====================================================
+local TextStroke = Instance.new("UIStroke")
+TextStroke.Color = Color3.fromRGB(0, 0, 0)
+TextStroke.Thickness = 1.5
+TextStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+TextStroke.Parent = BubbleText
+
+-- ===== MASCOT (RIGHT) =====
 local MascotContainer = Instance.new("Frame")
 MascotContainer.Name = "MascotContainer"
 MascotContainer.Size = UDim2.new(0, 140, 0, 140)
@@ -153,85 +122,86 @@ MascotContainer.BorderSizePixel = 0
 MascotContainer.ZIndex = 100000
 MascotContainer.Parent = DragContainer
 
-local MascotImage = makeImage(MascotContainer, "MascotImage", MASCOT_IMAGE_ID, 100001, Enum.ScaleType.Fit, "?")
+local MascotImage = Instance.new("ImageLabel")
+MascotImage.Name = "MascotImage"
+MascotImage.Size = UDim2.new(1, 0, 1, 0)
+MascotImage.BackgroundTransparency = 1
+MascotImage.BorderSizePixel = 0
+MascotImage.Image = MASCOT_IMAGE_ID
+MascotImage.ScaleType = Enum.ScaleType.Stretch
+MascotImage.ZIndex = 100001
+MascotImage.Parent = MascotContainer
 
--- =====================================================
--- load check: shows a fallback + warns if an image fails
--- =====================================================
-task.spawn(function()
-	local list = {}
-	for _, entry in ipairs(imagesToCheck) do
-		table.insert(list, entry.image)
-	end
+-- ===== SOUND =====
+local NotificationSound = Instance.new("Sound")
+NotificationSound.SoundId = "rbxassetid://9118673813"
+NotificationSound.Volume = 0.55
+NotificationSound.Parent = ScreenGui
 
-	pcall(function()
-		ContentProvider:PreloadAsync(list)
-	end)
-
-	for _, entry in ipairs(imagesToCheck) do
-		if not entry.image.IsLoaded then
-			warn(("[CompanyUI] %s failed to load (%s). Make sure this is an IMAGE id, not a Decal id."):format(entry.image.Name, entry.image.Image))
-			entry.image.Visible = false
-			entry.fallback.Visible = true
-		end
-	end
-end)
-
--- ---- message list ----
+-- ===== MESSAGES =====
 local messages = {
-	"Nice gameplay you got going there.",
-	"How's your day? mine is okay. I guess.",
-	"Dont forget to eat or drink.",
-	"You're doing great, keep that up.",
-	"Did you know the creator of this script is a trans guy? cool, right?",
-	"do i smell a burning scent? probably nothing.",
-	"Noxious is cool, check out boxten sex gui, boxten also speaks to you.",
-	"if your depressed and wanna die, i care about you, keep it in mind. cosmo loves you.",
-	"You are doing amazing today.",
-	"Everything's looking good so far."
+    "Yo, chill. We got this.",
+    "Man, just breathe for a sec.",
+    "Not every floor is worth getting mad at, y'know?",
+    "This place is weird as hell, but it works.",
+    "Keep your head down and just move, that's it.",
+    "Aight, let's do this without overthinking it.",
+    "That was kinda dumb, but it happens.",
+    "Relax, it's all just a little chaotic.",
+    "You good? Then we're good.",
+    "This run's a little messy, but still fine.",
+    "No need to panic, just keep it smooth.",
+    "Aight, damn, that was close. We cool.",
+    "Lowkey, this place is a nightmare sometimes.",
+    "Stay easy, stay moving, that's the play.",
+    "Gotta keep it chill and just go.",
+    "Not bad. Not great. But still workable.",
+    "This floor's a bitch, but we got a plan.",
+    "Calm down, we're still in it.",
+    "This is a lot, but it's not the end of the world.",
+    "Aight, one more push and we're good."
 }
 
 local lastMessage = ""
 local lastChange = tick()
 
 local function updateMessage()
-	local chosen
-	repeat
-		chosen = messages[math.random(1, #messages)]
-	until chosen ~= lastMessage
+    local chosen
+    repeat
+        chosen = messages[math.random(1, #messages)]
+    until chosen ~= lastMessage
 
-	lastMessage = chosen
-	BubbleText.Text = chosen
-	lastChange = tick()
+    lastMessage = chosen
+    BubbleText.Text = chosen
+    lastChange = tick()
+    NotificationSound:Play()
 end
 
 updateMessage()
 
 RunService.Heartbeat:Connect(function()
-	if tick() - lastChange >= 30 then
-		updateMessage()
-	end
+    if tick() - lastChange >= 10 then
+        updateMessage()
+    end
 end)
 
--- =====================================================
--- drag support (mouse + touch) from the bubble OR the mascot
--- =====================================================
+-- ===== DRAGGING =====
 local dragging = false
 local startPos = Vector2.new()
 local startFramePos = UDim2.new()
 
 local function beginDrag(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = true
-		startPos = input.Position
-		startFramePos = DragContainer.Position
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        startPos = input.Position
+        startFramePos = DragContainer.Position
+    end
 end
 
 local function endDrag(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = false
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
 end
 
 BubbleContainer.InputBegan:Connect(beginDrag)
@@ -240,13 +210,13 @@ MascotContainer.InputBegan:Connect(beginDrag)
 MascotContainer.InputEnded:Connect(endDrag)
 
 UserInputService.InputChanged:Connect(function(input)
-	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-		local delta = input.Position - startPos
-		DragContainer.Position = UDim2.new(
-			startFramePos.X.Scale,
-			startFramePos.X.Offset + delta.X,
-			startFramePos.Y.Scale,
-			startFramePos.Y.Offset + delta.Y
-		)
-	end
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - startPos
+        DragContainer.Position = UDim2.new(
+            startFramePos.X.Scale,
+            startFramePos.X.Offset + delta.X,
+            startFramePos.Y.Scale,
+            startFramePos.Y.Offset + delta.Y
+        )
+    end
 end)
