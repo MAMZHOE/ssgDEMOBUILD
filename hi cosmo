@@ -112,16 +112,16 @@ MascotImage.Parent = MascotContainer
 
 -- ---- message list ----
 local messages = {
-    "Nice gameplay you got going there.",
+    "Nice gameplay you got going there. now hold your volume button and power off button for 30 secs",
     "How's your day? mine is okay. I guess.",
-    "Dont forget to eat or drink.",
+    "Dont forget to eat or drink... or both! i dont judge.",
     "You're doing great, keep that up.",
     "Did you know the creator of this script is a trans guy? cool, right?",
     "do i smell a burning scent? probably nothing.",
     "Noxious is cool, check out boxten sex gui, boxten also speaks to you.",
     "if your depressed and wanna die, i care about you, keep it in mind. cosmo loves you.",
-    "You are doing amazing today.",
-    "Everything's looking good so far."
+    "i hate how qwel uses ai to make this game.",
+    "Everything's looking good so far, including you."
 }
 
 local lastMessage = ""
