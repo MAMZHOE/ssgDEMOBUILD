@@ -23,7 +23,7 @@ local MascotImage = Instance.new("ImageLabel")
 MascotImage.Size = UDim2.new(1, 0, 1, 0)
 MascotImage.BackgroundTransparency = 0.1
 MascotImage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MascotImage.Image = "rbxassetid://120714933532572"
+MascotImage.Image = "rbxassetid://128130329601408"
 MascotImage.ScaleType = Enum.ScaleType.Fit
 MascotImage.BorderSizePixel = 0
 MascotImage.Parent = MascotContainer
@@ -111,14 +111,6 @@ game:GetService("RunService").Heartbeat:Connect(function()
     -- update every 30 seconds (1800 frames at 60fps)
     if tick() % 30 < 0.1 then
         updateMessage()
-    end
-end)
 
--- alternative timer approach (more reliable)
-local lastUpdate = tick()
-game:GetService("RunService").Heartbeat:Connect(function()
-    if tick() - lastUpdate >= 30 then
-        updateMessage()
-        lastUpdate = tick()
     end
 end)
