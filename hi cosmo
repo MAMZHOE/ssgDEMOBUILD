@@ -25,7 +25,7 @@ MascotImage.BackgroundTransparency = 0.1
 MascotImage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MascotImage.Image = "rbxassetid://128130329601408"
 MascotImage.ScaleType = Enum.ScaleType.Fit
-MascotImage.BorderSizePixel = 0
+MascotImage.BorderSizePixel = 50
 MascotImage.Parent = MascotContainer
 
 local MascotCorner = Instance.new("UICorner")
