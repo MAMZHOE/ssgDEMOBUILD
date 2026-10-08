@@ -23,9 +23,9 @@ local MascotImage = Instance.new("ImageLabel")
 MascotImage.Size = UDim2.new(1, 0, 1, 0)
 MascotImage.BackgroundTransparency = 0.1
 MascotImage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MascotImage.Image = "rbxassetid://128130329601408"
+MascotImage.Image = "rbxassetid://120714933532572"
 MascotImage.ScaleType = Enum.ScaleType.Fit
-MascotImage.BorderSizePixel = 50
+MascotImage.BorderSizePixel = 0
 MascotImage.Parent = MascotContainer
 
 local MascotCorner = Instance.new("UICorner")
@@ -95,8 +95,9 @@ local messages = {
     "if your depressed and wanna die, i care about you, keep it in mind. cosmo loves you."
 }
 
--- ===== MESSAGE ROTATION =====
+-- ===== MESSAGE ROTATION (FIXED) =====
 local messageIndex = 1
+local lastMessageTime = tick()
 
 local function updateMessage()
     BubbleText.Text = messages[messageIndex]
@@ -104,13 +105,12 @@ local function updateMessage()
     if messageIndex > #messages then
         messageIndex = 1
     end
+    lastMessageTime = tick()
 end
 
--- change message every 30 seconds
+-- change message every 30 seconds (FIXED TIMER)
 game:GetService("RunService").Heartbeat:Connect(function()
-    -- update every 30 seconds (1800 frames at 60fps)
-    if tick() % 30 < 0.1 then
+    if tick() - lastMessageTime >= 30 then
         updateMessage()
-
     end
 end)
