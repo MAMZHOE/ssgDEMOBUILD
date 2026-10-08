@@ -1,8 +1,9 @@
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
--- ===== SCREEN UI =====
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "CompanyUI"
 ScreenGui.ResetOnSpawn = false
@@ -10,7 +11,7 @@ ScreenGui.IgnoreGuiInset = true
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 ScreenGui.Parent = PlayerGui
 
--- ===== CONTAINER (FOR DRAGGING) =====
+-- group that can be dragged around
 local DragContainer = Instance.new("Frame")
 DragContainer.Name = "DragContainer"
 DragContainer.Size = UDim2.new(0, 420, 0, 140)
@@ -20,12 +21,11 @@ DragContainer.BorderSizePixel = 0
 DragContainer.ZIndex = 9999
 DragContainer.Parent = ScreenGui
 
--- ===== SPEECH BUBBLE =====
+-- bubble outer frame
 local BubbleContainer = Instance.new("Frame")
-BubbleContainer.Name = "BubbleContainer"
 BubbleContainer.Size = UDim2.new(0, 280, 0, 120)
 BubbleContainer.Position = UDim2.new(0, 0, 0, 10)
-BubbleContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+BubbleContainer.BackgroundColor3 = Color3.fromRGB(62, 41, 20)
 BubbleContainer.BorderSizePixel = 0
 BubbleContainer.ZIndex = 9999
 BubbleContainer.Parent = DragContainer
@@ -35,148 +35,145 @@ BubbleCorner.CornerRadius = UDim.new(0, 12)
 BubbleCorner.Parent = BubbleContainer
 
 local BubbleStroke = Instance.new("UIStroke")
-BubbleStroke.Color = Color3.fromRGB(200, 80, 120)
+BubbleStroke.Color = Color3.fromRGB(101, 67, 33)
 BubbleStroke.Thickness = 2
-BubbleStroke.ZIndex = 9999
 BubbleStroke.Parent = BubbleContainer
 
--- text inside bubble
+-- inner message background
+local InnerBubble = Instance.new("Frame")
+InnerBubble.Size = UDim2.new(1, -16, 1, -16)
+InnerBubble.Position = UDim2.new(0, 8, 0, 8)
+InnerBubble.BackgroundColor3 = Color3.fromRGB(101, 67, 33)
+InnerBubble.BorderSizePixel = 0
+InnerBubble.ZIndex = 10000
+InnerBubble.Parent = BubbleContainer
+
+local InnerCorner = Instance.new("UICorner")
+InnerCorner.CornerRadius = UDim.new(0, 10)
+InnerCorner.Parent = InnerBubble
+
+-- speaker icon left side
+local SpeakerFrame = Instance.new("Frame")
+SpeakerFrame.Size = UDim2.new(0, 54, 0, 54)
+SpeakerFrame.Position = UDim2.new(0, 10, 0.5, -27)
+SpeakerFrame.BackgroundTransparency = 1
+SpeakerFrame.BorderSizePixel = 0
+SpeakerFrame.ZIndex = 10001
+SpeakerFrame.Parent = InnerBubble
+
+local SpeakerImage = Instance.new("ImageLabel")
+SpeakerImage.Size = UDim2.new(1, 0, 1, 0)
+SpeakerImage.Position = UDim2.new(0, 0, 0, 0)
+SpeakerImage.BackgroundTransparency = 1
+SpeakerImage.Image = "rbxassetid://128130329601408"
+SpeakerImage.ScaleType = Enum.ScaleType.Stretch
+SpeakerImage.ImageTransparency = 0
+SpeakerImage.BorderSizePixel = 0
+SpeakerImage.ZIndex = 10002
+SpeakerImage.Parent = SpeakerFrame
+
+local SpeakerCorner = Instance.new("UICorner")
+SpeakerCorner.CornerRadius = UDim.new(0, 10)
+SpeakerCorner.Parent = SpeakerImage
+
+-- bubble text area
 local BubbleText = Instance.new("TextLabel")
-BubbleText.Size = UDim2.new(1, -20, 1, -20)
-BubbleText.Position = UDim2.new(0, 10, 0, 10)
+BubbleText.Size = UDim2.new(1, -82, 1, -20)
+BubbleText.Position = UDim2.new(0, 74, 0, 10)
 BubbleText.Text = "Hello there!"
 BubbleText.Font = Enum.Font.GothamSemibold
 BubbleText.TextScaled = true
 BubbleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 BubbleText.BackgroundTransparency = 1
 BubbleText.TextWrapped = true
-BubbleText.ZIndex = 9999
-BubbleText.Parent = BubbleContainer
+BubbleText.TextXAlignment = Enum.TextXAlignment.Left
+BubbleText.ZIndex = 10003
+BubbleText.Parent = InnerBubble
 
--- ===== CORNER MASCOT (DECAL) =====
+-- mascot must be the top layer
 local MascotContainer = Instance.new("Frame")
-MascotContainer.Name = "MascotContainer"
 MascotContainer.Size = UDim2.new(0, 140, 0, 140)
-MascotContainer.Position = UDim2.new(1, -140, -0.05, 0)
-MascotContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MascotContainer.BorderSizePixel = 2
-MascotContainer.BorderColor3 = Color3.fromRGB(200, 80, 120)
-MascotContainer.ZIndex = 99999
+MascotContainer.Position = UDim2.new(1, -140, 0, 0)
+MascotContainer.BackgroundTransparency = 1
+MascotContainer.BorderSizePixel = 0
+MascotContainer.ZIndex = 100000
 MascotContainer.Parent = DragContainer
 
-local MascotCorner = Instance.new("UICorner")
-MascotCorner.CornerRadius = UDim.new(0, 14)
-MascotCorner.Parent = MascotContainer
-
 local MascotImage = Instance.new("ImageLabel")
-MascotImage.Size = UDim2.new(1, -4, 1, -4)
-MascotImage.Position = UDim2.new(0, 2, 0, 2)
-MascotImage.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-MascotImage.BackgroundTransparency = 0
+MascotImage.Size = UDim2.new(1, 0, 1, 0)
+MascotImage.Position = UDim2.new(0, 0, 0, 0)
+MascotImage.BackgroundTransparency = 1
 MascotImage.Image = "rbxassetid://120714933532572"
 MascotImage.ScaleType = Enum.ScaleType.Stretch
 MascotImage.ImageTransparency = 0
 MascotImage.BorderSizePixel = 0
-MascotImage.ZIndex = 99998
+MascotImage.ZIndex = 100001
 MascotImage.Parent = MascotContainer
 
-local ImageCorner = Instance.new("UICorner")
-ImageCorner.CornerRadius = UDim.new(0, 10)
-ImageCorner.Parent = MascotImage
-
--- ===== MESSAGE TEMPLATES =====
+-- ---- message list ----
 local messages = {
     "Nice gameplay you got going there.",
     "How's your day? mine is okay. I guess.",
     "Dont forget to eat or drink.",
     "You're doing great, keep that up.",
-    "...try call 911 rq, it gives you infinite ichor.",
-    "did you know the creator of this script is a trans guy? cool, right?",
+    "Did you know the creator of this script is a trans guy? cool, right?",
     "do i smell a burning scent? probably nothing.",
-    "did you know that dandys world uses a lot of undertale sfx? they can get sued by toby fox for infringement of work since they're owned by a trademarked company!",
     "Noxious is cool, check out boxten sex gui, boxten also speaks to you.",
-    "if your depressed and wanna die, i care about you, keep it in mind. cosmo loves you."
+    "if your depressed and wanna die, i care about you, keep it in mind. cosmo loves you.",
+    "You are doing amazing today.",
+    "Everything's looking good so far."
 }
 
--- ===== MESSAGE ROTATION (RANDOMIZED, NO REPEATS) =====
 local lastMessage = ""
-local lastMessageTime = tick()
+local lastChange = tick()
 
 local function updateMessage()
-    local randomIndex
+    local chosen
     repeat
-        randomIndex = math.random(1, #messages)
-    until messages[randomIndex] ~= lastMessage
-    
-    lastMessage = messages[randomIndex]
-    BubbleText.Text = lastMessage
-    lastMessageTime = tick()
+        chosen = messages[math.random(1, #messages)]
+    until chosen ~= lastMessage
+
+    lastMessage = chosen
+    BubbleText.Text = chosen
+    lastChange = tick()
 end
 
--- change message every 30 seconds
-game:GetService("RunService").Heartbeat:Connect(function()
-    if tick() - lastMessageTime >= 30 then
+updateMessage()
+
+RunService.Heartbeat:Connect(function()
+    if tick() - lastChange >= 30 then
         updateMessage()
     end
 end)
 
--- ===== DRAGGABLE FUNCTIONALITY (MOBILE + DESKTOP) =====
-local UserInputService = game:GetService("UserInputService")
-local mouse = LocalPlayer:GetMouse()
+-- drag support for touch + mouse
+local dragging = false
+local startPos = Vector2.new()
+local startFramePos = UDim2.new()
 
-local isDragging = false
-local dragStart = Vector2.new(0, 0)
-local containerStart = UDim2.new(0, 0, 0, 0)
-
--- Mouse button drag (Desktop)
-BubbleContainer.InputBegan:Connect(function(input, gameProcessed)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        isDragging = true
-        dragStart = Vector2.new(mouse.X, mouse.Y)
-        containerStart = DragContainer.Position
+BubbleContainer.InputBegan:Connect(function(input, processed)
+    if processed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        startPos = input.Position
+        startFramePos = DragContainer.Position
     end
 end)
 
-BubbleContainer.InputEnded:Connect(function(input, gameProcessed)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        isDragging = false
+BubbleContainer.InputEnded:Connect(function(input, processed)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
     end
 end)
 
--- Touch drag (Mobile)
-BubbleContainer.InputBegan:Connect(function(input, gameProcessed)
-    if input.UserInputType == Enum.UserInputType.Touch then
-        isDragging = true
-        dragStart = Vector2.new(input.Position.X, input.Position.Y)
-        containerStart = DragContainer.Position
-    end
-end)
-
-BubbleContainer.InputEnded:Connect(function(input, gameProcessed)
-    if input.UserInputType == Enum.UserInputType.Touch then
-        isDragging = false
-    end
-end)
-
--- Input changed for both mouse and touch
-UserInputService.InputChanged:Connect(function(input, gameProcessed)
-    if isDragging then
-        local currentPos = Vector2.new(0, 0)
-        
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            currentPos = Vector2.new(mouse.X, mouse.Y)
-        elseif input.UserInputType == Enum.UserInputType.Touch then
-            currentPos = Vector2.new(input.Position.X, input.Position.Y)
-        end
-        
-        if currentPos ~= Vector2.new(0, 0) then
-            local delta = currentPos - dragStart
-            DragContainer.Position = UDim2.new(
-                containerStart.X.Scale,
-                containerStart.X.Offset + delta.X,
-                containerStart.Y.Scale,
-                containerStart.Y.Offset + delta.Y
-            )
-        end
+UserInputService.InputChanged:Connect(function(input, processed)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - startPos
+        DragContainer.Position = UDim2.new(
+            startFramePos.X.Scale,
+            startFramePos.X.Offset + delta.X,
+            startFramePos.Y.Scale,
+            startFramePos.Y.Offset + delta.Y
+        )
     end
 end)
